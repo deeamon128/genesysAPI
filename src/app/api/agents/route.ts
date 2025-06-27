@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-    const mockData = {
-        availableAgents: 5,
-        queueName: "Support Queue"
-    };
+    const data = { availableAgents: 5 };
 
-    return NextResponse.json(mockData);
+    return new Response(JSON.stringify(data), {
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',  // Allow any origin - for testing only!
+        },
+    });
 }

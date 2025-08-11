@@ -4,11 +4,11 @@ export async function getGenesysAccessToken() {
     const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
     console.log('Fetching token with:', {
-        url: 'https://login.eu.purecloud.com/oauth/token',
+        url: 'https://login.euw2.purecloud.com/oauth/token',
         basicAuth,
     });
 
-    const response = await fetch('https://login.eu.purecloud.com/oauth/token', {
+    const response = await fetch('https://login.euw2.purecloud.com/oauth/token', {
         method: 'POST',
         headers: {
             'Authorization': `Basic ${basicAuth}`,

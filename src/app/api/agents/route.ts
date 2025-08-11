@@ -35,7 +35,8 @@ export async function GET() {
     const data = await response.json();
     console.log('Genesys API response:', data);
 
-    const availableAgents = Array.isArray(data.users) ? data.users.length : 0;
+    const availableAgents = Array.isArray(data.entities) ? data.entities.length : 0;
+
 
     return new Response(JSON.stringify({ availableAgents }), {
       headers: {

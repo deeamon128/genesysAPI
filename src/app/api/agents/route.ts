@@ -1,15 +1,16 @@
+import { getGenesysAccessToken } from '../../../../scripts/getGenesysToken';
+
 export async function GET() {
   console.log('Fetching Genesys agents...');
 
   try {
-    const accessToken = process.env.GENESYS_ACCESS_TOKEN;
+    const accessToken = await getGenesysAccessToken();
 
     if (!accessToken) {
       throw new Error('Missing access token from environment');
     }
 
     const response = await fetch('https://api.euw2.pure.cloud/api/v2/routing/queues/8231bf80-a969-4edf-a146-088d5b63b397/users?routingStatus=INTERACTING', {
-      method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',

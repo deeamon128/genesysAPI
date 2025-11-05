@@ -1,5 +1,29 @@
 import { getGenesysAccessToken } from '../../../../scripts/getGenesysToken';
 
+// Define TypeScript interfaces for the API response
+interface Stats {
+  count: number;
+}
+
+interface ObservationData {
+  metric: string;
+  qualifier: string;
+  stats: Stats;
+}
+
+interface ResultGroup {
+  queueId: string;
+}
+
+interface ObservationResult {
+  group: ResultGroup;
+  data: ObservationData[];
+}
+
+interface AnalyticsResponse {
+  results: ObservationResult[];
+}
+
 export async function GET() {
   console.log('Fetching Genesys queue analytics...');
 
@@ -32,14 +56,17 @@ export async function GET() {
       metrics: ["oOnQueueUsers"]
     };
 
-    const response = await fetch('https://api.euw2.pure.cloud/api/v2/analytics/queues/observations/query', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+    const response = await fetch(
+      'https://api.euw2.pure.cloud/api/v2/analytics/queues/observations/query',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -56,22 +83,25 @@ export async function GET() {
       );
     }
 
-    const data = await response.json();
+    const data: AnalyticsResponse = await response.json();
     console.log('Genesys Analytics response:', data);
 
     // Extract IDLE count safely
-    const idleMetric = data?.results?.[0]?.data?.find((d: any) => d.qualifier === 'IDLE');
-
+    const idleMetric = data?.results?.[0]?.data?.find(
+      (d: ObservationData) => d.qualifier === 'IDLE'
+    );
     const availableAgents = idleMetric?.stats?.count ?? 0;
 
-
-    return new Response(JSON.stringify({ availableAgents }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'X-Debug': 'Genesys Analytics API hit',
-      },
-    });
+    return new Response(
+      JSON.stringify({ availableAgents }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'X-Debug': 'Genesys Analytics API hit',
+        },
+      }
+    );
 
   } catch (error: unknown) {
     if (error instanceof Error) {

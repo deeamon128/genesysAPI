@@ -60,7 +60,8 @@ export async function GET() {
     console.log('Genesys Analytics response:', data);
 
     // Extract IDLE count safely
-    const idleMetric = data?.results?.[0]?.data?.find(d => d.qualifier === 'IDLE');
+    const idleMetric = data?.results?.[0]?.data?.find((d: any) => d.qualifier === 'IDLE');
+
     const availableAgents = idleMetric?.stats?.count ?? 0;
 
 
